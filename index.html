@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="zh-TW">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover" />
+  <title>北極海鸚 AR 展示</title>
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+  <style>
+    :root{
+      --bg:#e6f3fb;
+      --deep:#0b3b59;
+      --accent:#2aa9df;
+      --glass: rgba(255,255,255,0.12);
+    }
+    html,body{height:100%;margin:0;font-family: "Noto Sans TC", sans-serif;background: linear-gradient(180deg, #dff3ff 0%, #bfe9ff 60%); color:var(--deep)}
+    .container{max-width:900px;margin:24px auto;padding:18px;display:grid;grid-template-columns:1fr;gap:16px}
+    header{display:flex;align-items:center;gap:12px}
+    header h1{margin:0;font-size:1.6rem;color:var(--deep)}
+    .viewer-card{background: linear-gradient(180deg, rgba(255,255,255,0.6), rgba(255,255,255,0.25)); border-radius:16px; padding:12px; box-shadow: 0 6px 20px rgba(10,30,50,0.12); backdrop-filter: blur(6px);}
+    model-viewer{width:100%;height:60vh;border-radius:12px; background: linear-gradient(180deg, rgba(255,255,255,0.3), rgba(255,255,255,0.05));}
+    .info{display:flex;flex-direction:column;gap:8px;padding:8px}
+    .btns{display:flex;gap:8px;flex-wrap:wrap}
+    button{background:var(--accent);border:none;color:white;padding:8px 12px;border-radius:10px;cursor:pointer;font-weight:600}
+    .overlay{position:fixed;right:18px;top:18px;background:var(--glass);padding:10px;border-radius:12px;box-shadow:0 6px 20px rgba(10,30,50,0.12);width:240px}
+    .stat{font-size:0.9rem;color:#06323f}
+    footer{font-size:0.85rem;color:#064259; text-align:center; padding:12px}
+    /* floating light / wave decoration */
+    .wave{position:absolute;left:0;right:0;top:0;height:140px;background: radial-gradient(ellipse at center, rgba(90,170,210,0.14), transparent 40%);pointer-events:none;mix-blend-mode:screen}
+    @media(min-width:800px){ .container{grid-template-columns:1fr 380px} model-viewer{height:70vh} }
+  </style>
+</head>
+<body>
+  <div class="wave"></div>
+  <div class="container">
+    <div>
+      <header>
+        <img src="assets/puffin-icon.png" alt="puffin" width="64" height="64" style="border-radius:12px;object-fit:cover">
+        <h1>北極海鸚 — AR 互動展示</h1>
+      </header>
+      <div class="viewer-card" id="viewerCard">
+        <!-- Replace models/puffin.glb with your real model file -->
+        <model-viewer id="mv"
+          src="models/puffin.glb"
+          alt="北極海鸚 3D 模型"
+          ar
+          ar-modes="webxr scene-viewer quick-look"
+          environment-image="neutral"
+          auto-rotate
+          camera-controls
+          interaction-prompt="auto"
+          shadow-intensity="1"
+          exposure="1">
+        </model-viewer>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+          <div class="info">
+            <div style="font-weight:700">點擊模型或使用手勢以互動</div>
+            <div style="font-size:0.95rem;color:#094a5f">在手機上按「View in your space」進入 AR 模式</div>
+          </div>
+          <div class="btns">
+            <button id="btnInfo">顯示資訊</button>
+            <button id="btnReset">重置視角</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <aside class="overlay">
+      <div style="font-weight:800;color:var(--deep)">快速資料</div>
+      <div class="stat">學名: <strong>Fratercula arctica</strong></div>
+      <div class="stat">分布: 北大西洋海域沿岸</div>
+      <div class="stat">保育狀態: 近危 (Near Threatened)</div>
+      <hr>
+      <div style="font-size:0.95rem;color:#064259">操作提示：在模型上用兩指放大/旋轉；手機點「View in your space」進入 AR。</div>
+      <hr>
+      <div style="display:flex;gap:8px;justify-content:space-between">
+        <button id="qrBtn">顯示 QR</button>
+        <button id="downloadBtn">下載說明</button>
+      </div>
+    </aside>
+
+    <div style="padding:12px;">
+      <h2 style="margin-top:0">關於北極海鸚</h2>
+      <p>北極海鸚（Atlantic Puffin）是生活在北大西洋沿岸的小型海鳥，具有鮮豔的嘴喙與優秀的潛水能力。使用此 AR 展示可以更直觀地觀察牠們的外形與飛行姿態。</p>
+
+      <h3>如何準備模型</h3>
+      <ol>
+        <li>下載一個可合法使用的 .glb/.gltf 模型（例如從 Sketchfab, Poly Haven 等）。</li>
+        <li>將模型檔命名為 <code>puffin.glb</code> 並放入 <code>models/</code> 資料夾。</li>
+        <li>上傳整個專案到 GitHub Pages 或 Netlify，即可取得可掃描的 URL。</li>
+      </ol>
+    </div>
+  </div>
+
+  <footer>製作：你的專題組 • 教學示範版 • 請將模型放入 models/puffin.glb</footer>
+
+  <script>
+    const mv = document.getElementById('mv');
+    document.getElementById('btnInfo').addEventListener('click', ()=>{
+      alert("北極海鸚（Fratercula arctica）是一種以小魚為食的海鳥，繁殖於懸崖洞穴。");
+    });
+    document.getElementById('btnReset').addEventListener('click', ()=>{
+      mv.cameraOrbit = '0deg 75deg 2.5m';
+      mv.jumpCameraToGoal();
+    });
+    document.getElementById('qrBtn').addEventListener('click', ()=>{
+      // Placeholder behavior: open the qr image if present
+      window.open('assets/qr_placeholder.png','_blank');
+    });
+    document.getElementById('downloadBtn').addEventListener('click', ()=>{
+      window.open('README.html','_blank');
+    });
+  </script>
+</body>
+</html>
